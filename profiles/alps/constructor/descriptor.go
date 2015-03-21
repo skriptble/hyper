@@ -8,28 +8,28 @@ import (
 )
 
 type descriptor struct {
-	ID          string
-	Href        url.URL
-	Name        string
-	HyperType   alps.Control
-	Descriptors []descriptor
-	Rt          string
-	Doc         doc
-	Ext         ext
-	Link        link
+	ID          string       `json:"id,omitempty"`
+	Href        string       `json:"href,omitempty"`
+	Name        string       `json:"name,omitempty"`
+	HyperType   alps.Control `json:"type,omitempty"`
+	Descriptors []descriptor `json:"descriptor,omitempty"`
+	Rt          string       `json:"rt,omitempty"`
+	Doc         *doc         `json:"doc,omitempty"`
+	Ext         *ext         `json:"ext,omitempty"`
+	Link        *link        `json:"link,omitempty"`
 	index       map[string]struct{}
 }
 
 // NewDescriptor creates a new "descriptor" element that can be added to a
 // profile or a descriptor.
-func NewDescriptor(id string, href url.URL, opts ...Option) (Option, error) {
-	if id == "" && href == (url.URL{}) {
+func NewDescriptor(id string, href *url.URL, opts ...Option) (Option, error) {
+	if id == "" && href == nil {
 		return nil, ErrMissingID
 	}
 
 	d := new(descriptor)
 	d.ID = id
-	d.Href = href
+	d.Href = href.String()
 	d.index = make(map[string]struct{})
 	d.index[d.ID] = struct{}{}
 

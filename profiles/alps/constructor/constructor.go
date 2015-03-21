@@ -48,10 +48,10 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 
 type profile struct {
 	Version     alps.Version `json:"version"`
-	Doc         doc          `json:"doc,omitempty"`
+	Doc         *doc         `json:"doc,omitempty"`
 	Descriptors []descriptor `json:"descriptor"`
-	Ext         ext          `json:"ext,omitempty"`
-	Link        link         `json:"link,omitempty"`
+	Ext         *ext         `json:"ext,omitempty"`
+	Link        *link        `json:"link,omitempty"`
 	base        url.URL
 	index       map[string]struct{}
 }
@@ -84,19 +84,18 @@ func NewVersion(version alps.Version) Option {
 }
 
 type doc struct {
-	Href   url.URL `json:"href,omitempty"`
-	Format string  `json:"format,omitempty"`
-	Value  string  `json:"value,omitempty"`
+	Href   string `json:"href,omitempty"`
+	Format string `json:"format,omitempty"`
+	Value  string `json:"value,omitempty"`
 }
 
 // NewDoc creates a "doc" element that can be added to a profile or descriptor.
-func NewDoc(href url.URL, format, value string) Option {
+func NewDoc(href *url.URL, format, value string) Option {
 	return func(i interface{}) error {
-		d := doc{
-			Href:   href,
-			Format: format,
-			Value:  value,
-		}
+		d := new(doc)
+		d.Href = href.String()
+		d.Format = format
+		d.Value = value
 		switch t := i.(type) {
 		case *profile:
 			t.Doc = d
