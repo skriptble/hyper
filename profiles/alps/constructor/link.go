@@ -9,7 +9,7 @@ type link struct {
 
 // NewLink creates an "link" element that can be added to a profile or
 // descriptor.
-func NewLink(href url.URL, rel string) Option {
+func NewLink(href *url.URL, rel string) Option {
 	return func(i interface{}) error {
 		l := new(link)
 		l.Href = href.String()
