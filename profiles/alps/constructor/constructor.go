@@ -61,6 +61,7 @@ type profile struct {
 func NewProfile(opts ...Option) (Profile, error) {
 	p := new(profile)
 	p.Version = alps.V1
+	p.index = make(map[string]struct{})
 	for _, opt := range opts {
 		err := opt(p)
 		if err != nil {

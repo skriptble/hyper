@@ -1,7 +1,6 @@
 package constructor
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/skriptble/hyper/profiles/alps"
@@ -29,7 +28,9 @@ func NewDescriptor(id string, href *url.URL, opts ...Option) (Option, error) {
 
 	d := new(descriptor)
 	d.ID = id
-	d.Href = href.String()
+	if href != nil {
+		d.Href = href.String()
+	}
 	d.index = make(map[string]struct{})
 	d.index[d.ID] = struct{}{}
 
@@ -51,6 +52,7 @@ func NewDescriptor(id string, href *url.URL, opts ...Option) (Option, error) {
 				if conflict {
 					return ErrIDConflict
 				}
+				t.index[idx] = struct{}{}
 			}
 			t.Descriptors = append(t.Descriptors, *innerDescriptor)
 		case *descriptor:
@@ -65,7 +67,6 @@ func NewDescriptor(id string, href *url.URL, opts ...Option) (Option, error) {
 			}
 			t.Descriptors = append(t.Descriptors, *innerDescriptor)
 		default:
-			fmt.Println(t)
 			return ErrTypeUnknown
 		}
 		return nil

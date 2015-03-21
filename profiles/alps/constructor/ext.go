@@ -9,12 +9,15 @@ type ext struct {
 }
 
 // NewExt creates an "ext" element that can be added to a profile or descriptor.
-func NewExt(id, value string, href url.URL) Option {
+func NewExt(id, value string, href *url.URL) Option {
 	return func(i interface{}) error {
 		e := new(ext)
 		e.ID = id
-		e.Href = href.String()
 		e.Value = value
+
+		if href != nil {
+			e.Href = href.String()
+		}
 
 		switch t := i.(type) {
 		case *profile:
