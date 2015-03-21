@@ -43,7 +43,7 @@ type Doc interface {
 // profile specification (2.2.3)
 type Descriptor interface {
 	// Id returns the profile-wide unique identifier for this Descriptor.
-	Id() string
+	ID() string
 	// Href returns the href, if any, of a Descriptor related to this
 	// Descirptor. The returned url.URL must contain a fragment the references
 	// the related Descritor.
@@ -67,7 +67,7 @@ type Descriptor interface {
 	// A url in string format may also be provided. If no identifiers are
 	// provided then Descriptor will return all the Descriptors associated with
 	// this profile.
-	Descriptor(Id ...string) <-chan Descriptor
+	Descriptor(identifiers ...string) <-chan Descriptor
 	// Link returns the Link element, if any, associated with this profile.
 	// Return snil if no Ext is associated.
 	Link() Link
@@ -82,7 +82,7 @@ type Descriptor interface {
 // specification (2.2.4)
 type Ext interface {
 	// Id returns the identifier for this ext element.
-	Id() string
+	ID() string
 	// Href returns the url.URL which points to a document explaining the
 	// use of this ext element.
 	Href() url.URL

@@ -18,3 +18,13 @@ implementation.
 ALPS profile documents primarily describe the possible semantics of an
 application. Server implementations may choose to add additional semantics or
 only use a subset of the semantics provided by a profile.
+
+This library implements the ALPS specific and provides a constructor for
+creating ALPS documents and a consumer for consuming ALPS documents.
+
+Constructor
+-----------
+The constructor should be used to create the profiles which should then be
+cached. ALPS profiles are not meant to be dynamic, so the constructor can be
+used to create a cli tool that renders JSON or XML ALPS profiles to disk which
+can then be deployed onto a CDN or static asset server.

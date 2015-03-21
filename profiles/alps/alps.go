@@ -2,30 +2,38 @@ package alps
 
 import "net/url"
 
+// Format represents the different format types for a Doc as defined in
+// section 2.2.2 of the ALPS specification.
 type Format int
 
 // Control represents an ALPS type of hypermedia control
 type Control int
+
+// Version represents the version of the ALPS document
 type Version string
 
+// These constants are the four valid formats for a Doc element in ALPS.
 const (
 	_ Format = iota
-	TEXT
+	Text
 	HTML
-	ASCIIDOC
-	MARKDOWN
+	ASCIIDoc
+	Markdown
 )
 
+// These constants are the four valid hypermedia controls for a Descriptor
+// element in ALPS.
 const (
 	_ Control = iota
-	SEMANTIC
-	SAFE
-	IDEMPOTENT
-	UNSAFE
+	Semantic
+	Safe
+	Idempotent
+	Unsafe
 )
 
+// These constants are the valid version for an ALPS profile.
 const (
-	V_1_0 Version = "1.0"
+	V1 Version = "1.0"
 )
 
 type profile struct {
