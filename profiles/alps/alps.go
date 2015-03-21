@@ -1,6 +1,9 @@
 package alps
 
-import "net/url"
+import (
+	"encoding/json"
+	"net/url"
+)
 
 // Format represents the different format types for a Doc as defined in
 // section 2.2.2 of the ALPS specification.
@@ -106,4 +109,9 @@ func (c Control) String() (format string) {
 	}
 
 	return format
+}
+
+// MarshalJSON implements the json.Marshaller interface for the Control type.
+func (c Control) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.String())
 }
