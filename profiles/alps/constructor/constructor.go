@@ -92,11 +92,13 @@ type doc struct {
 
 // NewDoc creates a "doc" element that can be added to a profile or descriptor.
 func NewDoc(href *url.URL, format, value string) Option {
-	return func(i interface{}) error {
-		d := new(doc)
+	d := new(doc)
+	if href != nil {
 		d.Href = href.String()
-		d.Format = format
-		d.Value = value
+	}
+	d.Format = format
+	d.Value = value
+	return func(i interface{}) error {
 		switch t := i.(type) {
 		case *profile:
 			t.Doc = d
