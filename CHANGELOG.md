@@ -10,3 +10,4 @@ All noteable changes to this project will be documented in this file.
 - Tests for the ALPS Constructor package.
 - Documentation & README.md for the alps constructor package
 - LICENSE files for hyper, alps, and constructor
+- Example for using the constructor library.
