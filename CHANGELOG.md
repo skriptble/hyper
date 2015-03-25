@@ -11,3 +11,4 @@ All noteable changes to this project will be documented in this file.
 - Documentation & README.md for the alps constructor package
 - LICENSE files for hyper, alps, and constructor
 - Example for using the constructor library.
+- Collection+JSON consumer and producer architecture documents.
