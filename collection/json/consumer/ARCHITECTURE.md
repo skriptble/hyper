@@ -57,6 +57,10 @@ a minimum. This does come with a slight increase in verbosity, but allows code
 to remain clear as to the intent of a specific retrieval query.
 
 ###Finding & Traversing Links
+Clients should be able to retrieve links via their rel or name attribute. They
+should then be able to traverse those links to another C+J document. Links
+returned from the collection should implement a link interface, allowing
+several different implementation backends to be used.
 
 ###C+J Error
 When the C+J document being parsed contains an error a special error type should
