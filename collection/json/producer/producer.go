@@ -67,6 +67,50 @@ type query struct {
 }
 
 type template struct {
+	Data []datum `json:"data"`
+}
+
+func NewTemplate(opts ...Option) (Option, error) {
+	t := new(template)
+	for _, opt := range opts {
+		err := opt(t)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return func(i interface{}) error {
+		c, ok := i.(*collection)
+		if !ok {
+			return ErrTypeUnknown
+		}
+
+		c.Template = t
+		return nil
+	}, nil
+}
+
+type datum struct {
+	Name   string `json:"name"`
+	Value  string `json:"value,omitempty"`
+	Prompt string `json:"prompt,omitempty"`
+}
+
+func NewDatum(name, value, prompt string) Option {
+	d := datum{
+		Name:   name,
+		Value:  value,
+		Prompt: prompt,
+	}
+	return func(i interface{}) error {
+		switch t := i.(type) {
+		case *template:
+			t.Data = append(t.Data, d)
+		default:
+			return ErrTypeUnknown
+		}
+		return nil
+	}
 }
 
 type cjError struct {
