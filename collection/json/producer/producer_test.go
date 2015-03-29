@@ -198,3 +198,56 @@ func TestLink(t *testing.T) {
 	}
 
 }
+
+func TestQuery(t *testing.T) {
+	// Should not be able to attach incorrect option to query
+	errOpt := NewError("foo", "bar", "baz")
+	_, err := NewQuery(url.URL{}, "", "", "", errOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach incorrect option to query")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
+
+	// Should not be able to attach query to unknown type
+	href := url.URL{Host: "example.com", Scheme: "http"}
+	queryOpt, err := NewQuery(href, "foo", "bar", "baz")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	err = func(opt Option) error {
+		return opt(struct{}{})
+	}(queryOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach query to unknown type")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
+
+	// Should be able to attach a query to a collection
+	datumOpt := NewDatum("foo", "bar", "baz")
+	queryOpt, err = NewQuery(href, "foo", "bar", "baz", datumOpt)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	c, err := NewCollection(queryOpt)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	want := query{
+		Href:   "http://example.com",
+		Rel:    "foo",
+		Name:   "bar",
+		Prompt: "baz",
+		Data: []datum{
+			{
+				Name:   "foo",
+				Value:  "bar",
+				Prompt: "baz",
+			},
+		},
+	}
+	got := c.collection.Queries[0]
+	if !reflect.DeepEqual(want, got) {
+		t.Error("Should be able to attach a template to a collection")
+		t.Errorf("Wanted %+v, got %+v", want, got)
+	}
+}

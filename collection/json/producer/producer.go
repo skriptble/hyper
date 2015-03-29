@@ -116,6 +116,36 @@ func NewItem(href url.URL, opts ...Option) (Option, error) {
 }
 
 type query struct {
+	Href   string  `json:"href"`
+	Rel    string  `json:"rel"`
+	Name   string  `json:"name,omitempty"`
+	Prompt string  `json:"prompt,omitempty"`
+	Data   []datum `json:"data,omitempty"`
+}
+
+func NewQuery(href url.URL, rel, name, prompt string, opts ...Option) (Option, error) {
+	q := query{
+		Href:   href.String(),
+		Rel:    rel,
+		Name:   name,
+		Prompt: prompt,
+	}
+	for _, opt := range opts {
+		err := opt(&q)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return func(i interface{}) error {
+		c, ok := i.(*collection)
+		if !ok {
+			return ErrTypeUnknown
+		}
+
+		c.Queries = append(c.Queries, q)
+		return nil
+	}, nil
 }
 
 type template struct {
@@ -159,6 +189,8 @@ func NewDatum(name, value, prompt string) Option {
 		case *template:
 			t.Data = append(t.Data, d)
 		case *item:
+			t.Data = append(t.Data, d)
+		case *query:
 			t.Data = append(t.Data, d)
 		default:
 			return ErrTypeUnknown
