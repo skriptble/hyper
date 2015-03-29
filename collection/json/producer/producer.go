@@ -59,6 +59,33 @@ func NewCollection(opts ...Option) (Collection, error) {
 }
 
 type link struct {
+	Href   string `json:"href"`
+	Rel    string `json:"rel"`
+	Name   string `json:"name,omitempty"`
+	Render string `json:"render,omitempty"`
+	Prompt string `json:"prompt,omitempty"`
+}
+
+func NewLink(href url.URL, rel, name, render, prompt string) Option {
+	l := link{
+		Href:   href.String(),
+		Rel:    rel,
+		Name:   name,
+		Render: render,
+		Prompt: prompt,
+	}
+
+	return func(i interface{}) error {
+		switch t := i.(type) {
+		case *collection:
+			t.Links = append(t.Links, l)
+		case *item:
+			t.Links = append(t.Links, l)
+		default:
+			return ErrTypeUnknown
+		}
+		return nil
+	}
 }
 
 type item struct {

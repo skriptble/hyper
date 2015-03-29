@@ -154,3 +154,47 @@ func TestItem(t *testing.T) {
 	}
 
 }
+
+func TestLink(t *testing.T) {
+	// Should not be able to add link to an unknown type
+	href := url.URL{Host: "example.com", Scheme: "http"}
+	linkOpt := NewLink(href, "foo", "bar", "baz", "qux")
+	err := func(opt Option) error {
+		return opt(struct{}{})
+	}(linkOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach link to an unknown type")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
+
+	// Should be able to add link to an item
+	href.Host = "example.org"
+	itemOpt, err := NewItem(href, linkOpt)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	// Should be able to add link to a collection
+	c, err := NewCollection(linkOpt, itemOpt)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	want := link{
+		Href:   "http://example.com",
+		Rel:    "foo",
+		Name:   "bar",
+		Render: "baz",
+		Prompt: "qux",
+	}
+	got := c.collection.Links[0]
+	if !reflect.DeepEqual(want, got) {
+		t.Error("Should be able to attach a link to a collection")
+		t.Errorf("Wanted %+v, got %+v", want, got)
+	}
+	got = c.collection.Items[0].Links[0]
+	if !reflect.DeepEqual(want, got) {
+		t.Error("Should be able to attach a link to an item")
+		t.Errorf("Wanted %+v, got %+v", want, got)
+	}
+
+}
