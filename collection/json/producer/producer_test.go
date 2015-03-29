@@ -2,6 +2,7 @@ package producer
 
 import (
 	"encoding/json"
+	"net/url"
 	"os"
 	"reflect"
 	"testing"
@@ -103,4 +104,53 @@ func TestDatum(t *testing.T) {
 	// Should be able to attach datum to a template
 
 	// Should be able to attach datum to an item
+}
+
+func TestItem(t *testing.T) {
+	// Should not be able attach incorrect option to item
+	errOpt := NewError("foo", "bar", "baz")
+	_, err := NewItem(url.URL{}, errOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach incorrect option to template")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
+	// Should not be able to attach item to an unknown type
+	itemOpt, err := NewItem(url.URL{})
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	err = func(opt Option) error {
+		return opt(struct{}{})
+	}(itemOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach template to unknown type")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
+	// Should be able to attach an item to a collection
+	datumOpt := NewDatum("foo", "bar", "baz")
+	href := url.URL{Host: "example.com", Scheme: "http"}
+	itemOpt, err = NewItem(href, datumOpt)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	c, err := NewCollection(itemOpt)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	want := item{
+		Href: "http://example.com",
+		Data: []datum{
+			{
+				Name:   "foo",
+				Value:  "bar",
+				Prompt: "baz",
+			},
+		},
+	}
+	got := c.collection.Items[0]
+	if !reflect.DeepEqual(want, got) {
+		t.Error("Should be able to attach an item to a collection")
+		t.Errorf("Wanted %+v, got %+v", want, got)
+	}
+
 }

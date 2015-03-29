@@ -3,6 +3,7 @@ package producer
 import (
 	"encoding/json"
 	"errors"
+	"net/url"
 
 	"github.com/skriptble/hyper/collection/json"
 )
@@ -61,6 +62,30 @@ type link struct {
 }
 
 type item struct {
+	Href  string  `json:"href,omitempty"`
+	Data  []datum `json:"data,omitempty"`
+	Links []link  `json:"links,omitempty"`
+}
+
+func NewItem(href url.URL, opts ...Option) (Option, error) {
+	itm := new(item)
+	itm.Href = href.String()
+	for _, opt := range opts {
+		err := opt(itm)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return func(i interface{}) error {
+		c, ok := i.(*collection)
+		if !ok {
+			return ErrTypeUnknown
+		}
+
+		c.Items = append(c.Items, *itm)
+		return nil
+	}, nil
 }
 
 type query struct {
@@ -105,6 +130,8 @@ func NewDatum(name, value, prompt string) Option {
 	return func(i interface{}) error {
 		switch t := i.(type) {
 		case *template:
+			t.Data = append(t.Data, d)
+		case *item:
 			t.Data = append(t.Data, d)
 		default:
 			return ErrTypeUnknown
