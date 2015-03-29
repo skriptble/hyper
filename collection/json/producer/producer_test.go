@@ -100,10 +100,35 @@ func TestTemplate(t *testing.T) {
 
 func TestDatum(t *testing.T) {
 	// Should not be able to attach datum to unknown type
+	datumOpt := NewDatum("foo", "bar", "baz")
+	err := func(opt Option) error {
+		return opt(struct{}{})
+	}(datumOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach template to unknown type")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
 
 	// Should be able to attach datum to a template
+	_, err = NewTemplate(datumOpt)
+	if err != nil {
+		t.Error("Should be able to attach datum to a template")
+		t.Errorf("Wanted nil, but got %v", err)
+	}
 
 	// Should be able to attach datum to an item
+	_, err = NewItem(url.URL{}, datumOpt)
+	if err != nil {
+		t.Error("Should be able to attach datum to a template")
+		t.Errorf("Wanted nil, but got %v", err)
+	}
+
+	// Should be able to attach datum to a query
+	_, err = NewQuery(url.URL{}, "", "", "", datumOpt)
+	if err != nil {
+		t.Error("Should be able to attach datum to a template")
+		t.Errorf("Wanted nil, but got %v", err)
+	}
 }
 
 func TestItem(t *testing.T) {
