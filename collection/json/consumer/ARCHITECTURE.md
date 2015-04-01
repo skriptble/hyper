@@ -95,3 +95,27 @@ implementation. Static analysis tools give an additional ability to write a
 client based on a specific profile and ensure that before runtime the given code
 matches the profile as provided to said tools.
 
+Creating a new collection
+-------------------------
+Initial collection creation would usually be done via URL. However, there are
+feasible situations when the bytes could be created from some other method or
+retrieved via another method, e.g. file on disk, parsing from the body of a
+request handled, etc.. For this reason, while this initial implementation takes
+a direct href string, in the future there should be a general "fetcher"
+implemented and self referential options should be used to configure the initial
+collection to support these other methods of instantiating and browsing a
+collection.
+
+These are not being added in the initial version because it adds a large amount
+of verbosity and API space without a clear indication of actual usefulness.
+Additionally, adding the extra functionality for creating a Collection with self
+referential options could easily be added on without needing a breaking API
+change, although the resulting API would be slightly strange in situations where
+an href string is not being used.
+
+Immutability
+------------
+This library is designed with immutability, meaning that when a fetch is called
+a new collection is always returned instead of modifying the caller's
+collection. This allows following multiple paths from the same collection. It
+also helps prevent the accidental overwriting of a collection.
