@@ -2,8 +2,8 @@ package producer
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
-	"os"
 	"reflect"
 	"testing"
 
@@ -15,11 +15,24 @@ func TestCollection(t *testing.T) {
 	c := Collection{collection{
 		Version: cj.V1,
 	}}
-	got, err := json.Marshal(c)
+	b, err := json.Marshal(c)
 	if err != nil {
 		t.Errorf("Unexpect error: %v", err)
 	}
-	os.Stdout.Write(got)
+	want := `{"collection":{"version":"1.0"}}`
+	got := fmt.Sprintf("%s", b)
+	if got != want {
+		t.Error("Should be able to marshal collection into JSON")
+		t.Errorf("Wanted %v, got %v", want, got)
+	}
+
+	// Should not be able to attach incorrect option to collection
+	datumOpt := NewDatum("foo", "bar", "baz")
+	_, err = NewCollection(datumOpt)
+	if err != ErrTypeUnknown {
+		t.Error("Should not be able to attach incorrect option to collection")
+		t.Errorf("Wanted %v, got %v", ErrTypeUnknown, err)
+	}
 }
 
 func TestError(t *testing.T) {
